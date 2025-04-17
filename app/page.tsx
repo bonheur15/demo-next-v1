@@ -1,13 +1,15 @@
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import Link from "next/link";
 import Form from "./form";
+import { db } from "@/db";
+import { usersTable } from "@/db/schema";
 
 export default async function Home({
   searchParams,
 }: {
   searchParams: {
     filter?: string;
-  modalState?:string;
+    modalState?: string;
   };
 }) {
   const data = await GetData(searchParams.filter);
@@ -55,17 +57,16 @@ export default async function Home({
               <td className="py-2 px-4 border-b">
                 <Dialog>
                   <DialogTrigger asChild>
-                  <Link prefetch={true} href={"/?modalState=1"}>
-            {" "}
-            <button className="w-fit bg-[black] text-white px-[10px] py-[5px]">
-              Edit
-            </button>
-          </Link>
+                    <Link prefetch={true} href={"/?modalState=1"}>
+                      {" "}
+                      <button className="w-fit bg-[black] text-white px-[10px] py-[5px]">
+                        Edit
+                      </button>
+                    </Link>
                   </DialogTrigger>
-                  <DialogContent >
+                  <DialogContent>
                     <Form defaultValues={user} />
                   </DialogContent>
-
                 </Dialog>
               </td>
             </tr>
@@ -78,22 +79,6 @@ export default async function Home({
 
 async function GetData(filter?: string) {
   "use server";
-  await new Promise((resolve) => setTimeout(resolve, 2000));
-  if (filter === "under2") {
-    return [
-      { id: 1, name: "Alice Johnson" },
-      { id: 2, name: "Bob Smith" },
-    ];
-  } else if (filter === "over2") {
-    return [
-      { id: 3, name: "Charlie Davis" },
-      { id: 4, name: "Diana King" },
-    ];
-  }
-  return [
-    { id: 1, name: "Alice Johnson" },
-    { id: 2, name: "Bob Smith" },
-    { id: 3, name: "Charlie Davis" },
-    { id: 4, name: "Diana King" },
-  ];
+  console.log(filter);
+  return await db.select().from(usersTable);
 }
